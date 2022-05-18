@@ -1,0 +1,71 @@
+﻿@page "/"
+@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager NavigationManager
+@implements IAsyncDisposable
+
+<PageTitle>Orders</PageTitle>
+
+
+<div class="row">
+
+
+
+    @foreach (var order in orders)
+    {
+        <div class="col-sm-6">
+            <div class="card">
+                <h5 class="card-header">Order Id: @order.Id</h5>
+                <div class="card-body">
+                    <h5 class="card-title"> @order.CustomerName</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+
+                    @foreach (var waffle in order.Waffles)
+                    {
+                        <li class="list-group-item">
+                           @waffle.WaffleShape.ToString() || @waffle.Toppings.Join(", ");
+                        </li>
+                    }
+                </ul>
+                <div>
+                   <p class="card-text"> @order.TotalPrice </p>
+                </div>
+            </div>
+        </div>
+
+
+    }
+</div>
+
+@code {
+    private HubConnection? hubConnection;
+    private List<Order> orders = new List<Order>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"))
+            .Build();
+
+        hubConnection.On<Order>("ReceiveMessage", (order) =>
+        {
+            orders.Add(order);
+            InvokeAsync(StateHasChanged);
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+
+    public bool IsConnected =>
+        hubConnection?.State == HubConnectionState.Connected;
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+}
