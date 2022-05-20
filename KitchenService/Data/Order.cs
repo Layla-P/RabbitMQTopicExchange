@@ -1,4 +1,6 @@
-﻿namespace KitchenService
+﻿using KitechenService;
+
+namespace KitchenService
 {
     public class Order
     {
