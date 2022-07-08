@@ -33,7 +33,7 @@ app.MapPost("/waffleOrder", (RabbitSender rabbitSender, [FromBody] Order order) 
         order = new Order().Seed(orderIdSeed);
         orderIdSeed++;
     }
-    rabbitSender.PublishMessage<Order>(order, "order.cookwaffle");
+   
 });
 
 app.Run();

@@ -20,8 +20,6 @@ builder.Services.AddResponseCompression(opts =>
         new[] { "application/octet-stream" });
 });
 
-builder.Services.SetUpRabbitMq(builder.Configuration);
-builder.Services.AddHostedService<RabbitReceiver>();
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
