@@ -13,8 +13,7 @@ builder.Configuration
     .AddCommandLine(args);
 
 // Add services to the container.
-builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor();
+
 builder.Services.AddResponseCompression(opts =>
 {
     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
@@ -23,6 +22,9 @@ builder.Services.AddResponseCompression(opts =>
 
 builder.Services.SetUpRabbitMq(builder.Configuration);
 builder.Services.AddHostedService<RabbitReceiver>();
+
+builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
 
 var app = builder.Build();
 
@@ -41,7 +43,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.MapBlazorHub();
-//app.MapHub<OrderHub>("/orderhub");
+app.MapHub<OrderHub>("/orderhub");
 app.MapFallbackToPage("/_Host");
 
 app.Run();

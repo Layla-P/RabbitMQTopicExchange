@@ -21,10 +21,10 @@ namespace KitchenService
 		}
 
 		
-		public async Task StartAsync(CancellationToken cancellationToken)
+		public Task StartAsync(CancellationToken cancellationToken)
 		{
-			await DoStuff();
-			//return CompletedTask;
+			DoStuff();
+			return Task.CompletedTask;
 		}
 
 		public Task StopAsync(CancellationToken cancellationToken)
@@ -33,7 +33,7 @@ namespace KitchenService
 			return Task.CompletedTask;
 		}
 
-		private async Task DoStuff()
+		private void DoStuff()
 		{
 			_channel.ExchangeDeclare(exchange: _rabbitSettings.ExchangeName,
 				type: _rabbitSettings.ExchangeType);
@@ -46,23 +46,20 @@ namespace KitchenService
 							  routingKey: "order.cookwaffle");
 
 
-			Console.WriteLine(" [*] Waiting for messages. To exit press CTRL+C");
-
 			var consumer = new EventingBasicConsumer(_channel);
 			consumer.Received += async (model, ea) =>
 			{
 				var body = ea.Body.ToArray();
 				var message = Encoding.UTF8.GetString(body);
 				var order = JsonSerializer.Deserialize<Order>(message);
-				var routingKey = ea.RoutingKey;
 				await _orderHub.Clients.All.SendAsync("new-order", order);
 			};
 			_channel.BasicConsume(queue: queueName,
 								 autoAck: true,
 								 consumer: consumer);
 
-			Console.WriteLine(" Press [enter] to exit.");
-			Console.ReadLine();
+			
+			
 		}
 	}
 }

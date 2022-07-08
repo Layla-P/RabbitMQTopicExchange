@@ -23,7 +23,7 @@
                     @foreach (var waffle in order.Waffles)
                     {
                         <li class="list-group-item">
-                           @waffle.WaffleShape.ToString() || @string.Join(", ", waffle.Toppings);
+                           @waffle.WaffleShape.ToString() || @string.Join(", ", waffle.Toppings.Select(t=>t.Name));
                         </li>
                     }
                 </ul>
@@ -45,7 +45,7 @@
     protected override async Task OnInitializedAsync()
     {
         hubConnection = new HubConnectionBuilder()
-            .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"))
+            .WithUrl(NavigationManager.ToAbsoluteUri("/orderhub"))
             .Build();
 
         hubConnection.On<Order>("new-order", (order) =>
