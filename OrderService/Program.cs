@@ -24,7 +24,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 var orderIdSeed = 1;
-app.MapPost("/waffleOrder", (RabbitSender rabbitSender, [FromBody] Order order) =>
+app.MapPost("/waffleOrder", ([FromBody] Order order) =>
 {
     if (order.Id is 0)
     {
