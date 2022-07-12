@@ -13,8 +13,6 @@ builder.Configuration
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.SetUpRabbitMq(builder.Configuration);
-builder.Services.AddSingleton<RabbitSender>();
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
