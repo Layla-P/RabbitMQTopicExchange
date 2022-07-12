@@ -15,16 +15,16 @@ public class RabbitSender
 		_rabbitSettings = rabbitSettings;
 	}
 	
-	public void PublishMessage<T>(T entity, string topic) where T : class
+	public void PublishMessage<T>(T entity, string key) where T : class
 	{
 		var message = JsonSerializer.Serialize(entity);
 		//topic should become enum or similar
 		var body = Encoding.UTF8.GetBytes(message);
 		_channel.BasicPublish(exchange: _rabbitSettings.ExchangeName,
-									 routingKey: topic,
+									 routingKey: key,
 									 basicProperties: null,
 									 body: body);
-		Console.WriteLine(" [x] Sent '{0}':'{1}'", topic, message);
+		Console.WriteLine(" [x] Sent '{0}':'{1}'", key, message);
 
 	}
 }
