@@ -5,6 +5,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Channels;
 
 namespace KitchenService
 {
@@ -46,20 +47,20 @@ namespace KitchenService
 							  routingKey: "order.cookwaffle");
 
 
-			var consumer = new EventingBasicConsumer(_channel);
-			consumer.Received += async (model, ea) =>
+			var consumerAsync = new AsyncEventingBasicConsumer(_channel);
+            consumerAsync.Received += async (model, ea) =>
 			{
 				var body = ea.Body.ToArray();
 				var message = Encoding.UTF8.GetString(body);
 				var order = JsonSerializer.Deserialize<Order>(message);
 				await _orderHub.Clients.All.SendAsync("new-order", order);
-			};
-			_channel.BasicConsume(queue: queueName,
-								 autoAck: true,
-								 consumer: consumer);
 
-			
-			
+                _channel.BasicAck(ea.DeliveryTag, false);
+            };
+
+			_channel.BasicConsume(queue: queueName,
+								 autoAck: false,
+								 consumer: consumerAsync);			
 		}
 	}
 }
