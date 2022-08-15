@@ -1,9 +1,25 @@
 using KitchenService;
+using Messaging;
 using Microsoft.AspNetCore.ResponseCompression;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables()
+    .AddUserSecrets<Program>()
+    .AddCommandLine(args);
+
 // Add services to the container.
+
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+        new[] { "application/octet-stream" });
+});
+
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
@@ -12,6 +28,10 @@ builder.Services.AddResponseCompression(opts =>
     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
         new[] { "application/octet-stream" });
 });
+
+
+builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
 
 var app = builder.Build();
 

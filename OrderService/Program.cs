@@ -1,7 +1,14 @@
+using Messaging;
 using Microsoft.AspNetCore.Mvc;
 using OrderService;
-
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables()
+    .AddUserSecrets<Program>()
+    .AddCommandLine(args)
+    .Build();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -24,7 +31,7 @@ app.MapPost("/waffleOrder", ([FromBody] Order order) =>
         order = new Order().Seed(orderIdSeed);
         orderIdSeed++;
     }
-     // do something with the incoming order
+   
 });
 
 app.Run();
