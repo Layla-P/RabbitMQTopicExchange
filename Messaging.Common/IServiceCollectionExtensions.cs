@@ -8,19 +8,20 @@ public static class IServiceCollectionExtensions
 
     public static IServiceCollection SetUpRabbitMq(this IServiceCollection services, IConfiguration config)
     {
-        var configSection = config.GetSection("RabbitMQSettings");
+        var configSection = config.GetSection("RabbitMqSettings");
 
-        var settings = new RabbitMQSettings();
+        var settings = new RabbitMqSettings();
         configSection.Bind(settings);
 
         // add the settings for later use by other classes via injection
-        services.AddSingleton<RabbitMQSettings>(settings);
+        services.AddSingleton<RabbitMqSettings>(settings);
        
 
         // As the connection factory is disposable, need to ensure container disposes of it when finished
         services.AddSingleton<IConnectionFactory>(sp => new ConnectionFactory
         {
-            HostName = settings.HostName
+            HostName = settings.HostName,
+            DispatchConsumersAsync = true
         });
 
         services.AddSingleton<ModelFactory>();
@@ -32,8 +33,8 @@ public static class IServiceCollectionExtensions
     public class ModelFactory : IDisposable
     {
         private readonly IConnection _connection;
-        private readonly RabbitMQSettings _settings;
-        public ModelFactory(IConnectionFactory connectionFactory, RabbitMQSettings settings)
+        private readonly RabbitMqSettings _settings;
+        public ModelFactory(IConnectionFactory connectionFactory, RabbitMqSettings settings)
         {
             _settings = settings;
             _connection = connectionFactory.CreateConnection();

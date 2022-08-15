@@ -8,8 +8,8 @@ using System.Text.Json;
 public class RabbitSender
 {
 	private readonly IModel _channel;
-	private readonly RabbitMQSettings _rabbitSettings;
-	public RabbitSender(RabbitMQSettings rabbitSettings, IModel channel)
+	private readonly RabbitMqSettings _rabbitSettings;
+	public RabbitSender(RabbitMqSettings rabbitSettings, IModel channel)
 	{
 		_channel = channel;
 		_rabbitSettings = rabbitSettings;

@@ -1,5 +1,5 @@
 ﻿namespace Messaging;
-public class RabbitMQSettings
+public class RabbitMqSettings
 {
     public string HostName { get; set; }
     public string ExchangeName { get; set; }

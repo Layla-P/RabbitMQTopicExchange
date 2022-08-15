@@ -1,20 +1,18 @@
 ﻿using Messaging;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Channels;
 
 namespace KitchenService
 {
 	public class RabbitReceiver : IHostedService
 	{
-		private readonly RabbitMQSettings _rabbitSettings;
+		private readonly RabbitMqSettings _rabbitSettings;
 		private readonly IModel _channel;
 		private readonly IHubContext<OrderHub> _orderHub;
-		public RabbitReceiver(RabbitMQSettings rabbitSettings, IModel channel, IHubContext<OrderHub> hub)
+		public RabbitReceiver(RabbitMqSettings rabbitSettings, IModel channel, IHubContext<OrderHub> hub)
 		{
 			_rabbitSettings = rabbitSettings;
 			_channel = channel;
@@ -48,7 +46,7 @@ namespace KitchenService
 
 
 			var consumerAsync = new AsyncEventingBasicConsumer(_channel);
-            consumerAsync.Received += async (model, ea) =>
+            consumerAsync.Received += async (_, ea) =>
 			{
 				var body = ea.Body.ToArray();
 				var message = Encoding.UTF8.GetString(body);
